@@ -1,0 +1,9 @@
+th{
+    text-align: center;
+    width: 200px;
+    vertical-align: middle;
+}
+
+hr{
+    border-top: 1px dashed #8c8b8b;
+}
