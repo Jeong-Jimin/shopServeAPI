@@ -39,22 +39,13 @@ error_reporting(0); ?>
  $USERID        =   "eat591.wc" ;
  $OPENKEY       =   "de6fd4b5809f583b6af49cb70b34182895de6ecd" ;
  $MANAGERKEY    =   "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
- $URL           =   "https://management.api.shopserve.jp/v2/items/_search";
-
-//User Search Condition
- // $MAIL_ADDRESS  =   $_POST[''];
- // $ACCOUNT       =   $_POST[''];
- // $NAME          =   $_POST[''];
- // $NAME_KANA     =   $_POST[''];
+ $V2M0090           =   "https://management.api.shopserve.jp/v2/items/_search";
 
 
 //검색하고자 하는 옵션을 배열에 넣는다
  $searchCondition = array
  (
-     'mail_address'     =>  '',
-     'account'          =>  '',
-     'name'             =>  '',
-     'name_kana'        =>  ''
+     'size' => 30
  );
 
 
@@ -62,7 +53,7 @@ error_reporting(0); ?>
 $searchCondition = json_encode($searchCondition, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 
 
- $curl  =  curl_init($URL); // RESET
+ $curl  =  curl_init($V2M0090); // RESET
  curl_setopt($curl, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//접속 권한을 가진 키 부여
  curl_setopt($curl, CURLOPT_POST, 1); //포스트 메소드로 넘김
  curl_setopt($curl, CURLOPT_POSTFIELDS, $searchCondition);//검색옵션(POST메소드를 통해 보낼 값)을 지정한다
@@ -93,19 +84,22 @@ echo "<br />";
  ?>
 
  <center>
- <input type="button" value="新規商品登録" onclick="Register_Product()">
+ <input type="button" class="btn btn-success" value="新規商品登録" onclick="Register_Product()">
+
+ <h2 style="background:rgb(214, 251, 122);">商品一覧</h2>
  </center>
 
 
 <div id="userTable" style="width:auto; height: auto; margin:0 auto;">
-    <table class="table">
-      <thead class="thead-dark">
+    <table class="table table-striped">
+      <thead>
         <tr>
           <th scope="col">商品番号</th>
           <th scope="col">商品名</th>
           <th scope="col">販売価格</th>
           <th scope="col">商品メモ</th>
           <th scope="col">商品在庫</th>
+          <th scope="col">商品削除</th>
         </tr>
       </thead>
 
@@ -120,13 +114,19 @@ echo "<br />";
 
         <td><?=$GetData['contents'][$i]['item_name']?></td>
         <td><?=$GetData['contents'][$i]['item_price']?></td>
-          <td><?=$GetData['contents'][$i]['memo']?></td>
-            <td><?=$GetData['contents'][$i]['stock']['quantity']?></td>
-
-      </tr>
+        <td><?=$GetData['contents'][$i]['memo']?></td>
+        <td><?=$GetData['contents'][$i]['stock']['quantity']?></td>
+        <td>
+        <!-- <button name="Delete_product" onclick="Delete_product(<?=$GetData['contents'][$i]['item_code']?>)">
+            削除
+            </button> -->
+            <input type="button" onclick="Delete_product('<?=$GetData['contents'][$i]['item_code']?>')" value="削除"/>
+        </td>
+            </tr>
 
       <?php
-      }?>
+      }
+      ?>
  </tbody>
       </table>
 </div>
@@ -134,6 +134,13 @@ echo "<br />";
 
 
 <script>
+
+function Delete_product(item_code){
+
+    window.open('./Delete_Product.php?item_code='+item_code);
+}
+
+
 function Register_Product()
 {
     window.location.href = './Register_Form.php';

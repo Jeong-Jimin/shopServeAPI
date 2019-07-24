@@ -31,12 +31,13 @@
 <!-------------------- Get Category List ------------------------->
 <!---------------------------------------------------------------->
 <?php
+error_reporting(0);
 
 $USERID         =   "eat591.wc" ;
 $OPENKEY        =   "de6fd4b5809f583b6af49cb70b34182895de6ecd" ;
 $MANAGERKEY     =   "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
-$URL            =   "https://management.api.shopserve.jp/v2/service-setup/item-categories/_get";
-$CURL           =   curl_init($URL); // RESET
+$V2M0110        =   "https://management.api.shopserve.jp/v2/service-setup/item-categories/_get";
+$CURL           =   curl_init($V2M0110); // RESET
 
 curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
 curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST
@@ -45,17 +46,34 @@ curl_setopt($CURL, CURLOPT_RETURNTRANSFER, 1); //Print data to String Array
 $RESULT         =   curl_exec($CURL);
 curl_close($CURL);
 
-$GetData        =   json_decode ( $RESULT , true );
+$GetData        =   json_decode($RESULT,true);
 
-//Pull out Child category Using [for loop]
-for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $FirstCheck++ )
-{
-    for($SecondCheck = 0 ; $FirstCheck < 1 ; $FirstCheck++)
-{
+for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 
+    if($GetData['child_categories'][$i]['has_child_categories'] == "Yes"){
+        $First_Parents = $GetData['child_categories'][$i]['name'];
+
+        $Ctg_Info = "{";
+                $Ctg_Info .=  "\"top_category_path\":[";
+                $Ctg_Info .=  "\"$First_Parents\"";
+                $Ctg_Info .=  "]";
+                $Ctg_Info .=  "}";
+
+        $CURL = curl_init($V2M0110); // RESET
+        curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
+        curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST
+        curl_setopt($CURL, CURLOPT_POSTFIELDS, $Ctg_Info);
+        curl_setopt($CURL, CURLOPT_RETURNTRANSFER, 1); //Print data to String Array
+
+        $RESULT=curl_exec($CURL);
+        curl_close($CURL);
+
+        $child_GetData=json_decode($RESULT, true);
+        print_r($child_GetData);
+    }
 }
 
-}
+
 
  ?>
 
@@ -76,7 +94,7 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 <!---------------------------------------------------------------->
 <!-------------------- Register Form ----------------------------->
 <!---------------------------------------------------------------->
-<form method="post" id="RegisterForm">
+<form method="post" id="RegisterForm" name="RegisterForm">
     <table class="table table-bordered">
         <thead>
 
@@ -91,30 +109,33 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
 
     <tr>
-        <th scope="col" class="success">商品番号</th>
+        <th scope="col" class="success">商品番号<font style="Color:red;">✱</font></th>
         <td><input type="text" class="form-control" name="item_code"></td>
     </tr>
 
 
     <tr>
-        <th scope="col" class="success">商品名</th>
+        <th scope="col" class="success">商品名<font style="Color:red;">✱</font></th>
         <td> <input type="text" class="form-control" name="item_name"></td>
     </tr>
 
 
     <tr>
-        <th scope="col" class="success">商品カテゴリ</th>
+        <th scope="col" class="success">商品カテゴリ<font style="Color:red;">✱</font></th>
         <td>
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <select name="item_category">
+                <?php for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){?>
+                    <option value="<?=$GetData['child_categories'][$i]['name']?>"><?=$GetData['child_categories'][$i]['name']?></option>
+                <?php } ?>
 
-                Select Category
+                <?php for($i = 0 ; $i<count($child_GetData['child_categories']) ; $i++){?>
 
-                <select name="item_category" class="selectpicker">
-                    <?php for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){?>
-                        <option value="<?=$GetData['child_categories'][$i]['name']?>"><?=$GetData['child_categories'][$i]['name']?></option>
-                    <?php } ?>
-                </select>
-            </button>
+                    <option value="<?=$child_GetData['parent_category_path'][$i].",".$child_GetData['child_categories'][$i]['name']?>">
+                        <?=$child_GetData['parent_category_path'][$i].">".$child_GetData['child_categories'][$i]['name']?>
+                    </option>
+                    
+                <?php } ?>
+            </select>
         </td>
     </tr>
 
@@ -123,7 +144,7 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
         <th scope="col" class="success">価格設定</th>
         <td>
             <div class="form-check">
-                <input class="form-check-input position-static" type="radio" name="consumption_tax_setting" value="Standard">税込み
+                <input class="form-check-input position-static" type="radio" name="consumption_tax_setting" value="Standard" checked="checked">税込み
 
                 &nbsp;&nbsp;&nbsp;
 
@@ -145,14 +166,14 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
                     &nbsp;&nbsp;&nbsp;
 
-                <input class="form-check-input position-static" type="radio" name="regular_price_type" value="None">非表示
+                <input class="form-check-input position-static" checked type="radio" name="regular_price_type" value="None">非表示
             </div>
         </td>
     </tr>
 
 
     <tr>
-        <th scope="col" class="success">商品価格(円)</th>
+        <th scope="col" class="success">商品価格(円)<font style="Color:red;">✱</font></th>
         <td><input type="text" class="form-control" name="item_price" id="item_price">
         </td>
     </tr>
@@ -165,26 +186,47 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
 
     <tr>
-        <th scope="col" class="success">在庫</th>
-        <td><input type="text" class="form-control" name="quantity"></td>
+        <th scope="col" class="success">単位</th>
+        <td><input type="text" class="form-control" name="item_unit" placeholder="個"></td>
     </tr>
-
 
     <tr>
-        <th scope="col" class="success">単位</th>
-        <td><input type="text" class="form-control" name="item_unit"></td>
-    </tr>
+        <th scope="col" class="success">メイン画像登録</th>
+        <td><input type="button" class="form-control" value="画像一覧から選択" onclick="window.open('./Return_image.php','','width:200, height:200,resizable=yes, scrollbars=yes')">
 
+            <br />
+            <div id="image_insert"></div>
+            <br />
+
+            <input type="text" class="form-control" name="image_name_check" placeholder="画像名" />
+
+        </td>
+    </tr>
 
     <tr>
         <th scope="col" class="success">商品公開</th>
         <td>
             <div class="form-check">
-            <input class="form-check-input position-static" type="radio" name="display" value="Yes">公開する
+            <input class="form-check-input position-static" type="radio" name="display" value="Yes" checked="checked">公開する
 
             &nbsp;&nbsp;&nbsp;
 
             <input class="form-check-input position-static" type="radio" name="display" value="No">公開しない
+        </td>
+    </tr>
+
+    <tr>
+        <th scope="col" class="success">ページ表示オプション</th>
+        <td>
+            <input class="form-check-input position-static" type="checkbox" name="show_stock_viewer" value="Yes">&nbsp;「在庫を見る」
+
+            <input class="form-check-input position-static" type="checkbox" name="show_qr_code" value="Yes">&nbsp;「QRコードを見る」
+
+            <input class="form-check-input position-static" type="checkbox" name="show_customer_review" value="Yes">&nbsp;「顧客レビュー」
+
+            <input class="form-check-input position-static" type="checkbox" name="show_share_form" value="Yes">&nbsp;「友達に共有する」
+
+            <input class="form-check-input position-static" type="checkbox" name="show_inquire_form" value="Yes">&nbsp;「お問い合わせ」
         </td>
     </tr>
 
@@ -201,13 +243,16 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
 
     <tr>
-        <th scope="col" class="success">コンビニ受取</th>
+        <th scope="col" class="success">
+            コンビニ受取<font style="Color:red;">✱</font>
+        </th>
+
         <td>
                 <input class="form-check-input position-static" type="radio" name="delivery_to_convenience_store" value="Allow" />利用する
 
                    &nbsp;&nbsp;&nbsp;
 
-                <input class="form-check-input position-static" type="radio" name="delivery_to_convenience_store" value="Deny" />利用しない
+                <input class="form-check-input position-static" type="radio" name="delivery_to_convenience_store" value="Deny" checked="checked"/>利用しない
         </td>
     </tr>
 
@@ -220,7 +265,7 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
                &nbsp;&nbsp;&nbsp;
 
-            <input class="form-check-input position-static" type="radio" name="bundle_packing" value="Deny">利用しない
+            <input class="form-check-input position-static" type="radio" name="bundle_packing" value="Deny" checked="checked">利用しない
             </div>
         </td>
     </tr>
@@ -236,7 +281,9 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
 <!-- Set Delivery Detail Option  -->
     <tr>
-        <th scope="col" class="success" style="vertical-align:middle;">送料</th>
+        <th scope="col" class="success" style="vertical-align:middle;">送料
+            <font style="Color:red;">✱</font>
+        </th>
         <td>
             <input type="checkbox" id="check_mail" name="delivery_type" value="Mail" onclick="Mail_Delivery()"; />メール便
 
@@ -245,19 +292,22 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
             <input type="checkbox" id="check_Standard" name="delivery_type" value="Standard" onclick="Standard_Delivery()"; />通常便
 
 
+<!----------------------------------------------------------------------------->
+<!------------------------ Standard Delivery Set ------------------------------>
+<!----------------------------------------------------------------------------->
 
-        <div id="Std_Delivery" style="display:none;">
+        <div id="Std_Delivery" style="display:block;">
             <hr />
 
             <p style="background:rgb(78, 241, 163); width:300px;">
                 <b>アイスパック設定</b>
             </p>
 
-            <input type="checkbox"  name="temparature_controlled" id="temparature_controlled_cold" value="Cold" onclick="temparature_Exception_cold()"/>冷蔵便<img src="./reizou.gif"/>
+            <input type="checkbox"  name="temperature_controlled" id="temperature_controlled_cold" value="Cold" onclick="temperature_Exception_cold()"/>冷蔵便<img src="./reizou.gif"/>
 
             <br />
 
-            <input type="checkbox" name="temparature_controlled" id="temparature_controlled_freeze" value="Freeze" onclick="temparature_Exception_freeze()"/>冷凍便<img src="reitou.gif"/>
+            <input type="checkbox" name="temperature_controlled" id="temperature_controlled_freeze" value="Freeze" onclick="temperature_Exception_freeze()"/>冷凍便<img src="reitou.gif"/>
 
             <br />
             <hr />
@@ -267,27 +317,20 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
                 <b>特別送料設定</b>
             </p>
 
-
-            <input type="checkbox" name="enable_specific_shipping_charge" value="Yes" id="enable_specific_shipping_charge"  onclick="enable_specific_shipping_charge_set()">
+            <p>
+                    <input type="checkbox" name="enable_specific_shipping_charge" value="Yes" id="enable_specific_shipping_charge"  onclick="enable_specific_shipping_charge_set()">
+                    利用する
+            </p>
 
             <input type="text" class="form-controller col-md-2" name="specific_shipping_charge" id="specific_shipping_charge">&nbsp;(円)　
 
-            <br />
+            <br /><br />
 
             <p>
-                <p style="background:rgb(78, 241, 163); width:300px;">
-                    <b>★送料0円の場合</b>
-                </p>
-
-            <input class="form-check-input position-static" type="radio" name="display_type" value="Free">&nbsp; "無料配送" で表示
-
-            &nbsp;&nbsp;&nbsp;
-
-            <input class="form-check-input position-static" type="radio" name="display_type" value="Zero">&nbsp; "送料0円" で表示
-            </p>
+            <input class="form-check-input position-static" type="checkbox" name="display_type" value="Free">&nbsp; 0円の場合は　"無料配送" で表示
 
             <p>
-                <input class="form-check-input position-static" type="radio" name="prior" value="Yes">&nbsp;
+                <input class="form-check-input position-static" type="checkbox" name="prior" value="Yes">&nbsp;
                 ★この送料を優先する &nbsp;&nbsp;&nbsp;
             </p>
 
@@ -299,6 +342,9 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
             <input type="text" class="form-controller col-md-2"  name="shipping_preparation_period" id="shipping_preparation_period" placeholder = "0~365">日
 
         </td>
+<!----------------------------------------------------------------------------->
+<!------------------------ Standard Delivery Set ------------------------------>
+<!----------------------------------------------------------------------------->
         </div>
     </tr>
     </thead>
@@ -308,4 +354,9 @@ for($FirstCheck = 0 ; $FirstCheck < count($GetData['child_categories']) ; $First
 
         <input type="submit" class= "btn btn-success btn-lg" value="該当の内容で商品登録" onclick="Register_Product()">
     </form>
+
+    <input type="button" class= "btn btn-success btn-lg" value="商品一覧確認" onclick="window.open('./Return_Product.php');">
+
+    <br />
+    <br />
 </center>

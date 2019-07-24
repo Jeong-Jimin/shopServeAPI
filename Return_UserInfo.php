@@ -101,7 +101,7 @@ echo "<br />";
 
 <div id="userTable" style="width:1000px; height: 1000px; margin:0 auto;">
     <table class="table">
-      <thead class="thead-dark">
+      <thead>
         <tr>
           <th scope="col">番語</th>
           <th scope="col">会員ID</th>
