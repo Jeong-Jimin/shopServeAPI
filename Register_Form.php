@@ -69,7 +69,6 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
         curl_close($CURL);
 
         $child_GetData=json_decode($RESULT, true);
-        print_r($child_GetData);
     }
 }
 
@@ -94,7 +93,7 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 <!---------------------------------------------------------------->
 <!-------------------- Register Form ----------------------------->
 <!---------------------------------------------------------------->
-<form method="post" id="RegisterForm" name="RegisterForm">
+<form method="post" id="RegisterForm" name="RegisterForm" onsubmit="return Register_Product()">
     <table class="table table-bordered">
         <thead>
 
@@ -110,13 +109,13 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 
     <tr>
         <th scope="col" class="success">商品番号<font style="Color:red;">✱</font></th>
-        <td><input type="text" class="form-control" name="item_code"></td>
+        <td><input type="text" class="form-control" id="item_code" name="item_code"></td>
     </tr>
 
 
     <tr>
         <th scope="col" class="success">商品名<font style="Color:red;">✱</font></th>
-        <td> <input type="text" class="form-control" name="item_name"></td>
+        <td> <input type="text" class="form-control" id="item_name" name="item_name"></td>
     </tr>
 
 
@@ -128,13 +127,13 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
                     <option value="<?=$GetData['child_categories'][$i]['name']?>"><?=$GetData['child_categories'][$i]['name']?></option>
                 <?php } ?>
 
-                <?php for($i = 0 ; $i<count($child_GetData['child_categories']) ; $i++){?>
+                <!-- <?php for($i = 0 ; $i<count($child_GetData['child_categories']) ; $i++){?>
 
                     <option value="<?=$child_GetData['parent_category_path'][$i].",".$child_GetData['child_categories'][$i]['name']?>">
                         <?=$child_GetData['parent_category_path'][$i].">".$child_GetData['child_categories'][$i]['name']?>
                     </option>
-                    
-                <?php } ?>
+
+                <?php } ?> -->
             </select>
         </td>
     </tr>
@@ -191,14 +190,43 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
     </tr>
 
     <tr>
-        <th scope="col" class="success">メイン画像登録</th>
-        <td><input type="button" class="form-control" value="画像一覧から選択" onclick="window.open('./Return_image.php','','width:200, height:200,resizable=yes, scrollbars=yes')">
+        <th scope="col" class="success" style="vertical-align:middle;">メイン画像登録</th>
+        <td><input type="button" class="form-control" value="画像一覧から選択"
+          onclick="window.open('./Return_image.php?role=main_image','','width:200, height:200,resizable=yes, scrollbars=yes')">
 
             <br />
             <div id="image_insert"></div>
             <br />
 
             <input type="text" class="form-control" name="image_name_check" placeholder="画像名" />
+
+        </td>
+    </tr>
+
+
+    <tr>
+        <th scope="col" class="success" style="vertical-align:middle;">PC用紹介文</th>
+        <td>
+          <p style="background:rgb(78, 241, 163); width:300px;">
+              <b>メイン紹介文</b>
+              <input type="button" class="form-control" value="画像一覧から選択"
+                onclick="window.open('./Return_image.php?role=main_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
+          </p>
+          <textarea rows="8" cols="70" name="pc_mainArea" onkeyup="countChar(this, 'pc_mainArea')"></textarea>
+          <small><div id="charNum1"></div></small>
+
+          <br />
+
+          <p style="background:rgb(78, 241, 163); width:300px;">
+              <b>サブ紹介文</b>
+              <input type="button" class="form-control" value="画像一覧から選択"
+                onclick="window.open('./Return_image.php?role=serve_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
+          </p>
+          <textarea rows="8" cols="70" name="pc_serveArea" onkeyup="countChar(this,'pc_serveArea')"></textarea>
+          <small><div id="charNum2"></div></small>
+
+          <br />
+
 
         </td>
     </tr>
@@ -230,6 +258,14 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
         </td>
     </tr>
 
+<tr>
+  <th scope="col" class="success">商品ステータス</th>
+  <td>
+      <input class="form-check-input position-static" type="checkbox" name="new_arrival" value="Yes">&nbsp;「新着商品」で登録&nbsp;&nbsp;
+
+      <input class="form-check-input position-static" type="checkbox" name="recommended" value="Yes">&nbsp;「おすすめ商品」で登録
+  </td>
+</tr>
 
     <!--------------------------------------------------------------->
     <!---------- Delivery Detail Set for Product Register ----------->
@@ -244,7 +280,7 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 
     <tr>
         <th scope="col" class="success">
-            コンビニ受取<font style="Color:red;">✱</font>
+            コンビニ受取
         </th>
 
         <td>
@@ -352,7 +388,7 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 
         <br />
 
-        <input type="submit" class= "btn btn-success btn-lg" value="該当の内容で商品登録" onclick="Register_Product()">
+        <input type="submit" class= "btn btn-success btn-lg" value="該当の内容で商品登録">
     </form>
 
     <input type="button" class= "btn btn-success btn-lg" value="商品一覧確認" onclick="window.open('./Return_Product.php');">
@@ -360,3 +396,37 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
     <br />
     <br />
 </center>
+
+
+<script>
+function countChar(val, name) {
+
+if(name == 'pc_mainArea')
+{
+var len = val.value.length;
+
+if (len >= 32500) {
+  val.value = val.value.substring(0, 32500);
+  }
+
+else {
+    $('#charNum1').text(len);
+}
+
+}
+
+else if (name == 'pc_serveArea')
+{
+var len = val.value.length;
+if (len >= 32500) {
+ val.value = val.value.substring(0, 32500);
+ }
+
+else {
+   $('#charNum2').text(len);
+}
+}
+}
+
+
+</script>

@@ -1,14 +1,85 @@
-
 $(document).ready(function(){
   $('.disabled_check').click(function(){
-
   })
 });
 
+
 function Register_Product()
-{   
-    $("#RegisterForm").attr("action", "./Register_Product.php");
+{
+  if ($("#item_code").val().length < 1 )
+  {
+    alert('商品番号は必須項目です');
+    $("#item_code").focus();
+    return false;
+  }
+
+
+  // else if ($("#item_code").val().length > 1 ) {
+  //
+  //       $.ajax({
+  //   type: "POST",
+  //   url: "duplicate_Codecheck.php",
+  //   data: { item_code: $("#item_code").val() }
+  //   })
+  //
+  //   .done(function(msg) {
+  //   if(msg == 200){
+  //       alert('すでに登録されている商品番号です');
+  //       $("#item_code").focus();
+  //       return false;
+  //   }
+  //   });
+  // }
+
+    else if ($("#item_name").val().length < 1)
+    {
+      alert('商品名は必須項目です');
+      $("#item_name").focus();
+      return false;
+    }
+
+    else if ($("#item_price").val().length < 1)
+    {
+      alert('価格は必須項目です');
+      $("#item_price").focus();
+      return false;
+    }
+
+    else if (isNaN($("#item_price").val()))
+    {
+      alert('価格は数字のみ入力可能です');
+      $("#item_price").focus();
+      return false;
+    }
+
+    else if ($("#item_price").val()　> 99999999)
+    {
+      alert('99,999,999円以内の金額のみ入力可能です');
+      $("#item_price").focus();
+      return false;
+    }
+
+    // else if (($("#check_mail").prop('checked',false)) && (($("#check_Standard").prop('unchecked'))))
+    // {
+    //   alert('配送方法を選んでください');
+    //   $("#check_mail").focus();
+    //   return false;
+    // }
+
+    else if (($("#check_mail").prop('checked',false)) && ($("#check_Standard").prop('checked',false)))
+    {
+      alert('配送方法を選んでください');
+      $("#check_mail").focus();
+      return false;
+    }
+
+else
+{
+  $("#RegisterForm").attr("action", "./Register_Product.php");
 }
+
+}
+
 
 
 

@@ -39,18 +39,18 @@ error_reporting(0); ?>
  $USERID        =   "eat591.wc" ;
  $OPENKEY       =   "de6fd4b5809f583b6af49cb70b34182895de6ecd" ;
  $MANAGERKEY    =   "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
- $V2M0090           =   "https://management.api.shopserve.jp/v2/items/_search";
+ $V2M0090       =   "https://management.api.shopserve.jp/v2/items/_search";
 
 
 //검색하고자 하는 옵션을 배열에 넣는다
  $searchCondition = array
  (
-     'size' => 30
+     'size' => 40
  );
 
 
 //만든 배열을 json_encode()을 이용해 string형태로 바꾼 후 외부에 전달
-$searchCondition = json_encode($searchCondition, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+$searchCondition = json_encode($searchCondition);
 
 
  $curl  =  curl_init($V2M0090); // RESET

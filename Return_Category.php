@@ -12,8 +12,6 @@ $Ctg_Info = "{";
         $Ctg_Info .=  "]";
         $Ctg_Info .=  "}";
 
-
-
 $CURL = curl_init($V2M0110); // RESET
 curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
 curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST

@@ -8,8 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 </header>
+
 <?php
     error_reporting(0);
 
@@ -18,7 +18,6 @@
     $MANAGERKEY     =   "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
     $URL            =   "https://management.api.shopserve.jp/v2/images?size=100";
 
-    $curl = curl_init($URL); // RESET
     $curl  =  curl_init($URL); // RESET
     curl_setopt($curl, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//접속 권한을 가진 키 부여
 
@@ -30,6 +29,7 @@
  curl_close($curl);
 
 $GetData  =  json_decode ( $RESULT , true );
+$role = $_GET['role'];
 ?>
 
 
@@ -61,32 +61,42 @@ $GetData  =  json_decode ( $RESULT , true );
         </td>
 
         <td>
-            <button name="'<?=$img?>'" id="img_button" onclick="image_submit('<?=$img?>')">挿入</button>
+            <button onclick="image_submit('<?=$img?>','<?=$role?>')">挿入</button>
         </td>
     </tr>
 <?php } ?>
-
 </table>
-
-
 </center>
 
 <script>
 
-function image_submit(name){
+function image_submit(name, role){
 
     var text = "<img src='http://eat591.wc.shopserve.jp/pic-labo/"+name+"'style='width:50px; height:50px;'>";
+    var pc_text = "<img src='http://eat591.wc.shopserve.jp/pic-labo/"+name+"'>";
+
+    if(role == 'main_image')
+    {
+               $("#image_insert", opener.document).empty();
+               $("#image_insert", opener.document).append(text);
+
+               window.opener.document.RegisterForm.image_name_check.value=name;
+               window.close();
+    }
 
 
-             $("#image_insert", opener.document).empty();
-             $("#image_insert", opener.document).append(text);
+    else if(role == 'main_discription')
+    {
+                window.opener.document.RegisterForm.pc_mainArea.value += pc_text;
+                window.close();
+    }
 
 
-             // $("#image_name_check", opener.document).empty();
-             // $("#image_name_check", opener.document).append(name);
-
-             window.opener.document.RegisterForm.image_name_check.value=name;
-             window.close();
+    else if(role == 'serve_discription')
+    {
+                window.opener.document.RegisterForm.pc_serveArea.value += pc_text;
+                window.close();
+    }
 }
 
 </script>

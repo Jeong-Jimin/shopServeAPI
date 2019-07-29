@@ -20,15 +20,11 @@ for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){
     if($GetData['child_categories'][$i]['has_child_categories'] == "Yes"){
         $First_Parents = $GetData['child_categories'][$i]['name'];
 
-
-
         $Ctg_Info = "{";
                 $Ctg_Info .=  "\"top_category_path\":[";
                 $Ctg_Info .=  "\"$First_Parents\"";
                 $Ctg_Info .=  "]";
                 $Ctg_Info .=  "}";
-
-
 
         $CURL = curl_init($V2M0110); // RESET
         curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
@@ -41,10 +37,8 @@ for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){
 
         $GetData        =   json_decode ( $RESULT , true );
 
-
 echo "CHILD_CATEGORIES : ". $GetData['child_categories'][0]['name']."<br />";
     }
-
 }
 
 

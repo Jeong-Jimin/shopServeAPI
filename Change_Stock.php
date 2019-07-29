@@ -3,13 +3,14 @@
  $shop_ID       = "eat591.wc" ;
  $OPENKEY       = "de6fd4b5809f583b6af49cb70b34182895de6ecd" ;
  $MANAGERKEY    = "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
- $ITEM_CODE     = "AAA00014"; //$_POST['item_code'];
+ $ITEM_CODE     = "AAA00015"; //$_POST['item_code'];
 // $QUANTITY      = $_POST['quantity'];
  $V2M0019       = "https://management.api.shopserve.jp/v2/items/$ITEM_CODE/stock";
 
 
 $stockChange = array(
                     //'Color' => '白',
+                    'unlimited' => "No", 
                     'quantity' => '40'
                     );
 
