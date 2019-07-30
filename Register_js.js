@@ -42,15 +42,17 @@ function Register_Product()
       return false;
     }
 
-
-
 // //item_code duplicate Exception processing
   else if ($("#item_code").val() != "" )
   {
+    var check = true;
+
         $.ajax({
     type: "POST",
     url: "./duplicate_Codecheck.php",
     data: { item_code: $("#item_code").val()},
+
+    async:false,
 
 //if return value is 200 or 404
     success: function(msg) {
@@ -58,10 +60,12 @@ function Register_Product()
     if(msg == 200){
         alert('すでに登録されている商品番号です');
         $("#item_code").focus();
-        return false;
+        check = false;
       }
+
     }
   });
+  return check;
   }
 }
 
