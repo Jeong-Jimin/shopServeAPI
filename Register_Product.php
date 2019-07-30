@@ -292,7 +292,7 @@ $statusInfo = json_encode($statusInfo);
 curlPut($V20098_URL, $statusInfo);
 
 echo "<script>alert('Register Successed!')</script>";
-//echo "<script>window.location.href = './Register_Form.php';</script>";
+echo "<script>window.location.href = './Register_Form.php';</script>";
 
 
 /****************************************************************************/

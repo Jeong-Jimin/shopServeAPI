@@ -141,9 +141,6 @@ global $MANAGERKEY;
 
 </select>
 
-
-
-
     <br />
     <br />
 

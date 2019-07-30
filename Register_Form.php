@@ -27,6 +27,7 @@
 </head>
 
 
+
 <!---------------------------------------------------------------->
 <!-------------------- Get Category List ------------------------->
 <!---------------------------------------------------------------->
@@ -37,42 +38,25 @@ $USERID         =   "eat591.wc" ;
 $OPENKEY        =   "de6fd4b5809f583b6af49cb70b34182895de6ecd" ;
 $MANAGERKEY     =   "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
 $V2M0110        =   "https://management.api.shopserve.jp/v2/service-setup/item-categories/_get";
-$CURL           =   curl_init($V2M0110); // RESET
 
-curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
-curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST
-curl_setopt($CURL, CURLOPT_RETURNTRANSFER, 1); //Print data to String Array
+//Original Directory Fath farming
+$GetData        =   json_decode(curlPost($V2M0110,null),true);
 
-$RESULT         =   curl_exec($CURL);
-curl_close($CURL);
-
-$GetData        =   json_decode($RESULT,true);
-
-for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
-
-    if($GetData['child_categories'][$i]['has_child_categories'] == "Yes"){
-        $First_Parents = $GetData['child_categories'][$i]['name'];
-
-        $Ctg_Info = "{";
-                $Ctg_Info .=  "\"top_category_path\":[";
-                $Ctg_Info .=  "\"$First_Parents\"";
-                $Ctg_Info .=  "]";
-                $Ctg_Info .=  "}";
-
-        $CURL = curl_init($V2M0110); // RESET
-        curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
-        curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST
-        curl_setopt($CURL, CURLOPT_POSTFIELDS, $Ctg_Info);
-        curl_setopt($CURL, CURLOPT_RETURNTRANSFER, 1); //Print data to String Array
-
-        $RESULT=curl_exec($CURL);
-        curl_close($CURL);
-
-        $child_GetData=json_decode($RESULT, true);
-    }
-}
-
-
+//First child directory farming
+// for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){
+//
+//     if($GetData['child_categories'][$i]['has_child_categories'] == "Yes"){
+//         $First_Parents = $GetData['child_categories'][$i]['name'];
+//
+//         $Ctg_Info = "{";
+//                 $Ctg_Info .=  "\"top_category_path\":[";
+//                 $Ctg_Info .=  "\"$First_Parents\"";
+//                 $Ctg_Info .=  "]";
+//                 $Ctg_Info .=  "}";
+//
+//         $child_GetData  =   json_decode(curlPost($V2M0110,$Ctg_Info), true);
+//     }
+// }
 
  ?>
 
@@ -90,17 +74,17 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
     </div>
 
 
-<!---------------------------------------------------------------->
-<!-------------------- Register Form ----------------------------->
-<!---------------------------------------------------------------->
-<form method="post" id="RegisterForm" name="RegisterForm" onsubmit="return Register_Product()">
+<!---------------------------------------------------------------------------------->
+<!----------------------------- Register Form -------------------------------------->
+<!---------------------------------------------------------------------------------->
+<form method="post" action="./Register_Product.php" id="RegisterForm" name="RegisterForm" onsubmit="return Register_Product()">
     <table class="table table-bordered">
         <thead>
 
-<!--------------------------------------------------------------->
-<!------------ Basic Information for Product Register ----------->
-<!-- Product Code, Name, Detail of price, Category, Unit, Memo -->
-<!--------------------------------------------------------------->
+<!--------------------------------------------------------------------------------->
+<!--------------------- Basic Information for Product Register -------------------->
+<!----------- Product Code, Name, Detail of price, Category, Unit, Memo ----------->
+<!--------------------------------------------------------------------------------->
     <tr class="table-success">
         <th scope="col" style="background-color:rgb(63, 204, 136);"></th>
         <td class="bg-success" style="text-align:center; background-color:rgb(63, 204, 136);"><b>基本情報</b></td>
@@ -126,14 +110,6 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
                 <?php for($i = 0 ; $i< count($GetData['child_categories']) ; $i++){?>
                     <option value="<?=$GetData['child_categories'][$i]['name']?>"><?=$GetData['child_categories'][$i]['name']?></option>
                 <?php } ?>
-
-                <!-- <?php for($i = 0 ; $i<count($child_GetData['child_categories']) ; $i++){?>
-
-                    <option value="<?=$child_GetData['parent_category_path'][$i].",".$child_GetData['child_categories'][$i]['name']?>">
-                        <?=$child_GetData['parent_category_path'][$i].">".$child_GetData['child_categories'][$i]['name']?>
-                    </option>
-
-                <?php } ?> -->
             </select>
         </td>
     </tr>
@@ -192,14 +168,11 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
     <tr>
         <th scope="col" class="success" style="vertical-align:middle;">メイン画像登録</th>
         <td><input type="button" class="form-control" value="画像一覧から選択"
-          onclick="window.open('./Return_image.php?role=main_image','','width:200, height:200,resizable=yes, scrollbars=yes')">
-
+                  onclick="window.open('./return_Image.php?role=main_image','','width:200, height:200,resizable=yes, scrollbars=yes')">
             <br />
             <div id="image_insert"></div>
             <br />
-
             <input type="text" class="form-control" name="image_name_check" placeholder="画像名" />
-
         </td>
     </tr>
 
@@ -210,7 +183,7 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
           <p style="background:rgb(78, 241, 163); width:300px;">
               <b>メイン紹介文</b>
               <input type="button" class="form-control" value="画像一覧から選択"
-                onclick="window.open('./Return_image.php?role=main_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
+                onclick="window.open('./return_Image.php?role=main_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
           </p>
           <textarea rows="8" cols="70" name="pc_mainArea" onkeyup="countChar(this, 'pc_mainArea')"></textarea>
           <small><div id="charNum1"></div></small>
@@ -220,13 +193,12 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
           <p style="background:rgb(78, 241, 163); width:300px;">
               <b>サブ紹介文</b>
               <input type="button" class="form-control" value="画像一覧から選択"
-                onclick="window.open('./Return_image.php?role=serve_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
+                onclick="window.open('./return_Image.php?role=serve_discription','','width:200, height:200,resizable=yes, scrollbars=yes')">
           </p>
           <textarea rows="8" cols="70" name="pc_serveArea" onkeyup="countChar(this,'pc_serveArea')"></textarea>
           <small><div id="charNum2"></div></small>
 
           <br />
-
 
         </td>
     </tr>
@@ -321,11 +293,11 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
             <font style="Color:red;">✱</font>
         </th>
         <td>
-            <input type="checkbox" id="check_mail" name="delivery_type" value="Mail" onclick="Mail_Delivery()"; />メール便
+            <input type="radio" id="check_mail" name="delivery_type" value="Mail" onclick="Mail_Delivery()"; />メール便
 
             &nbsp;&nbsp;&nbsp;
 
-            <input type="checkbox" id="check_Standard" name="delivery_type" value="Standard" onclick="Standard_Delivery()"; />通常便
+            <input type="radio" id="check_Standard" name="delivery_type" value="Standard" checked="checked" onclick="Standard_Delivery()"; />通常便
 
 
 <!----------------------------------------------------------------------------->
@@ -398,6 +370,28 @@ for($i = 0 ; $i< count(GetData['child_categories']) ; $i++){
 </center>
 
 
+<?php
+
+function curlPost($URL, $PutArray){
+
+global $USERID;
+global $MANAGERKEY;
+
+  $CURL = curl_init($URL); // RESET
+  curl_setopt($CURL, CURLOPT_USERPWD, $USERID.":".$MANAGERKEY);//Giving Access Key
+  curl_setopt($CURL, CURLOPT_POST, 1); //Set Method to POST
+  curl_setopt($CURL, CURLOPT_POSTFIELDS, $PutArray);
+  curl_setopt($CURL, CURLOPT_RETURNTRANSFER, 1); //Print data to String Array
+
+  $RESULT = curl_exec($CURL);
+  curl_close($CURL);
+
+  return $RESULT;
+}
+
+ ?>
+
+
 <script>
 function countChar(val, name) {
 
@@ -427,6 +421,4 @@ else {
 }
 }
 }
-
-
 </script>
