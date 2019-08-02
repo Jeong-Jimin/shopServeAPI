@@ -7,15 +7,29 @@ $MANAGERKEY  =  "e0c861280bb91d0ddd5893a5d696b13079ae1bc8" ;
 $V2M0110     =  "https://management.api.shopserve.jp/v2/service-setup/item-categories/_get";
 
 
-#1차 카테고리 뽑아냄
+#1차 기본 카테고리 뽑아냄
 $Get_OrgDir      =  json_decode(curlPost($V2M0110, null),true);
 
+echo "Original Dircetory<br />";
+print_r($Get_OrgDir);
+echo "<br />";echo "<br />";echo "<br />";
 
-//GetData안에 자식카테고리가 있으면 출력
+
+//Get_OrgDir안에 자식카테고리가 있으면 출력
 //총 5번 loop
-for($i = 0 ; $i < count($Get_OrgDir['child_categories']) ; $i++){
+//자식 카테고리가 $Get_OrgDir 총 갯수보다 작으면? => If Yes 안에 다시 for문 작성
+//근데 자식카테고리 구하기 전에 그 갯수를 어케 알고 for조건 설정하는지..?
 
-    if($Get_OrgDir['child_categories'][$i]['has_child_categories'] == "Yes"){
+
+/****************************************************************************/
+/******************** First Serve Category *********************************/
+/**************************************************************************/
+
+//현재 오리지널 카테고리 수 = 3개
+for($i = 0 ; $i < count($Get_OrgDir['child_categories']) ; $i++)
+{
+    if($Get_OrgDir['child_categories'][$i]['has_child_categories'] == "Yes")
+    {
 
         $OrgDir = $Get_OrgDir['child_categories'][$i]['name'];
 
@@ -26,78 +40,134 @@ for($i = 0 ; $i < count($Get_OrgDir['child_categories']) ; $i++){
         $Ctg_Info .=  "}";
 
         #첫번째 자식 카테고리
-      $First_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
+        //$First_serveDir =  array();
+        $First_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
 
-      // #for
-      echo "First_serveDir<BR />";
-      print_r($First_serveDir[$i]);
-      echo"sfjlskjfldsjflk<BR />";
-      echo "<BR />";
-
-
-
-
-        #2차 자식 카테고리 데이터 취득
-        if($First_serveDir[$i]['child_categories'][0]['has_child_categories'] == "Yes"){
-
-          $Second_path = $First_serveDir[$i]['child_categories'][$i]['name'];
-
-          $Ctg_Info  =  "{";
-          $Ctg_Info .=  "\"top_category_path\":[";
-          $Ctg_Info .=  "\"$OrgDir\",";
-          $Ctg_Info .=  "\"$Second_path\"";
-          $Ctg_Info .=  "]";
-          $Ctg_Info .=  "}";
-
-          $Second_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
-
-          echo $i."<br /><Br />";
-          print_r($Second_serveDir[$i]);
-          echo "====================================";
-          echo "<BR />";
-          echo "<BR />";
-
-          if($Second_serveDir[0]['child_categories'][0]['has_child_categories'] == "Yes"){
+      // for($j = 0 ; $j < count($First_serveDir['child_categories'])  ; $j++ )
+      // {
+      //  }
+#for
+        echo "First_serveDir[$i]".$First_serveDir[$i]['parent_category_path'][0];
+        echo "<BR />";
+        print_r($First_serveDir[$i]);
+        echo "<BR />";
 
 
-            $Third_path = $Second_serveDir[$i]['child_categories'][$i]['name'];
+        /****************************************************************************/
+        /******************** Second Serve Category ********************************/
+        /**************************************************************************/
 
-            $Ctg_Info = "{";
+          #2차 자식 카테고리 데이터 취득
+          if($First_serveDir[$i]['child_categories'][0]['has_child_categories'] == "Yes")
+          {
+
+            $Second_path = $First_serveDir[$i]['child_categories'][$i]['name'];
+
+            $Ctg_Info  =  "{";
             $Ctg_Info .=  "\"top_category_path\":[";
             $Ctg_Info .=  "\"$OrgDir\",";
-            $Ctg_Info .=  "\"$Second_path\",";
-            $Ctg_Info .=  "\"$Third_path\"";
+            $Ctg_Info .=  "\"$Second_path\"";
             $Ctg_Info .=  "]";
             $Ctg_Info .=  "}";
 
-            $Third_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
+            $Second_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
 
-            echo $i."<br /><Br />";
-            print_r($Third_serveDir[$i]);
+            echo "Second_serveDir<br />";
+            print_r($Second_serveDir[$i]);
             echo "====================================";
             echo "<BR />";
             echo "<BR />";
-          }
-          else{
+
+            /****************************************************************************/
+            /******************** Third Serve Category *********************************/
+            /**************************************************************************/
+
+              if($Second_serveDir[0]['child_categories'][0]['has_child_categories'] == "Yes")
+              {
+
+
+                $Third_path = $Second_serveDir[$i]['child_categories'][$i]['name'];
+
+                $Ctg_Info = "{";
+                $Ctg_Info .=  "\"top_category_path\":[";
+                $Ctg_Info .=  "\"$OrgDir\",";
+                $Ctg_Info .=  "\"$Second_path\",";
+                $Ctg_Info .=  "\"$Third_path\"";
+                $Ctg_Info .=  "]";
+                $Ctg_Info .=  "}";
+
+                $Third_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
+
+                echo "Third_serveDir<br />";
+                print_r($Third_serveDir[$i]);
+                echo "====================================";
+                echo "<BR />";
+                echo "<BR />";
+
+
+                    /****************************************************************************/
+                    /******************** Forth Serve Category *********************************/
+                    /**************************************************************************/
+
+                  if($Third_serveDir[0]['child_categories'][0]['has_child_categories'] == "Yes")
+                  {
+
+
+                    $Forth_path = $Third_serveDir[$i]['child_categories'][$i]['name'];
+
+                    $Ctg_Info = "{";
+                    $Ctg_Info .=  "\"top_category_path\":[";
+                    $Ctg_Info .=  "\"$OrgDir\",";
+                    $Ctg_Info .=  "\"$Second_path\",";
+                    $Ctg_Info .=  "\"$Third_path\",";
+                    $Ctg_Info .=  "\"$Forth_path\"";
+                    $Ctg_Info .=  "]";
+                    $Ctg_Info .=  "}";
+
+                    $Forth_serveDir[$i] = json_decode(curlPost($V2M0110, $Ctg_Info), true);
+
+                    echo "Forth_serveDir<br />";
+                    print_r($Forth_serveDir[$i]);
+                    echo "====================================";
+                    echo "<BR />";
+                    echo "<BR />";
+
+                }//End of Forth_serveDir's loop
+
+                //Forth_serveDir's else processing
+                else
+                {
+                  break;
+                }
+
+            }//End of Third_serveDir's loop
+
+          //Third_serveDir's else processing
+          else
+          {
             break;
           }
-        }
 
-        else{
-          break;
-        }
+          // echo "What's this?!";
+          // echo $First_serveDir[$i]['child_categories'][0]['full_path'][0];
+          // echo "<BR />";
+          // echo $First_serveDir[$i]['child_categories'][0]['full_path'][1];
+          // echo "<BR />";
+          // echo "<BR />";
 
-        echo $First_serveDir[$i]['child_categories'][0]['full_path'][0];
-        echo "<BR />";
-        echo $First_serveDir[$i]['child_categories'][0]['full_path'][1];
-        echo "<BR />";
-        echo "<BR />";
-    }
+      }//End of Second_serveDir's loop
 
-    else{ #자식카테고리가 없으면 for을 빠져나옴
+
+    //Second_serveDir's else processing
+    else
+    {     #자식카테고리가 없으면 for을 빠져나옴
       break;
     }
-}
+
+  }//End of First_serveDir's loop
+}//Original [for] loof
+
+
 
 
 function curlPost($URL, $PutArray){
@@ -120,6 +190,8 @@ global $MANAGERKEY;
 
 <br />
 <br />
+
+
 
 
 <!-------------------- 뽑아낸 카테고리 select함 ------------------------->

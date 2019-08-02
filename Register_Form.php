@@ -177,7 +177,83 @@ $GetData        =   json_decode(curlPost($V2M0110,null),true);
     </tr>
 
 
+<!-- サブイメージ挿入 -->
+<!--
+<tr>
+<th scope="col" class="success" style="vertical-align:middle;">サブイメージ登録 <br>（9つまで）</th>
+<td>
+  <input type="button" class="form-control" value="画像一覧から選択"
+            onclick="window.open('./return_Image.php?role=serve_image','','width:200, height:200,resizable=yes, scrollbars=yes')">
+            <br />
+
+
+        <div id="serveImage_div" style="width:300px; height:300px;" >
+            <table class="table table-bordered">
+              <tr class="something">
+                 <th scope="row" class="success">画像</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+
+              <tr>
+                <th scope="row" class="success">位置</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+
+              <tr>
+                <th scope="row" class="success">削除</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+            </table>
+
+            <br />
+
+            <table class= "table table-bordered">
+              <tr>
+                 <th scope="row" class="success">画像</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+
+              <tr>
+                <th scope="row" class="success">位置</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+
+              <tr>
+                <th scope="row" class="success">削除</th>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert2"></div></td>
+                <td><div id="serve_image_insert3"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+                <td><div id="serve_image_insert"></div></td>
+              </tr>
+            </table>
+          </div> -->
+
+
+</td>
     <tr>
+
+
         <th scope="col" class="success" style="vertical-align:middle;">PC用紹介文</th>
         <td>
           <p style="background:rgb(78, 241, 163); width:300px;">
@@ -350,9 +426,6 @@ $GetData        =   json_decode(curlPost($V2M0110,null),true);
             <input type="text" class="form-controller col-md-2"  name="shipping_preparation_period" id="shipping_preparation_period" placeholder = "0~365">日
 
         </td>
-<!----------------------------------------------------------------------------->
-<!------------------------ Standard Delivery Set ------------------------------>
-<!----------------------------------------------------------------------------->
         </div>
     </tr>
     </thead>
@@ -364,7 +437,6 @@ $GetData        =   json_decode(curlPost($V2M0110,null),true);
     </form>
 
     <input type="button" class= "btn btn-success btn-lg" value="商品一覧確認" onclick="window.open('./Return_Product.php');">
-
     <br />
     <br />
 </center>
@@ -393,32 +465,34 @@ global $MANAGERKEY;
 
 
 <script>
+
+//Count letters in Textbox Area
 function countChar(val, name) {
 
-if(name == 'pc_mainArea')
-{
-var len = val.value.length;
+    if(name == 'pc_mainArea')
+    {
+          var len = val.value.length;
 
-if (len >= 32500) {
-  val.value = val.value.substring(0, 32500);
-  }
+          if (len >= 32500) {
+            val.value = val.value.substring(0, 32500);
+            }
 
-else {
-    $('#charNum1').text(len);
-}
+          else {
+              $('#charNum1').text(len);
+          }
 
-}
+    }
 
-else if (name == 'pc_serveArea')
-{
-var len = val.value.length;
-if (len >= 32500) {
- val.value = val.value.substring(0, 32500);
- }
+    else if (name == 'pc_serveArea')
+    {
+          var len = val.value.length;
+          if (len >= 32500) {
+           val.value = val.value.substring(0, 32500);
+           }
 
-else {
-   $('#charNum2').text(len);
-}
-}
+          else {
+             $('#charNum2').text(len);
+          }
+    }
 }
 </script>

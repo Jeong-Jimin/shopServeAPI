@@ -23,6 +23,7 @@ function curlPost($URL){
  //cURL실행
   $RESULT = curl_exec($curl);
 
+//Error Exception Processing
   if (!curl_errno($curl))
     {
      switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)){
@@ -31,6 +32,7 @@ function curlPost($URL){
          break;
 
 
+         // 404Error:: Not register item
        default:
          echo 'Unexpected HTTP code: ', $http_code, "\n";
      }
@@ -45,7 +47,7 @@ function curlPost($URL){
   curl_close($curl);
 
 
-return $http_code;
+  return $http_code;
 }
 
 

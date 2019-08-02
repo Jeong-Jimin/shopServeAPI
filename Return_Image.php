@@ -85,6 +85,13 @@ function image_submit(name, role){
     }
 
 
+    else if(role=='serve_image')
+    {
+      $("#serve_image_insert", opener.document).empty();
+      $("#serve_image_insert", opener.document).append(text);
+      window.close();
+    }
+
     else if(role == 'main_discription')
     {
                 window.opener.document.RegisterForm.pc_mainArea.value += pc_text;

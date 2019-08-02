@@ -1,6 +1,10 @@
 
+//Validation check when pressing the Submit button in Register_Form
+//No problem  =>  Go to the registration screen
+//Problem     =>  Return to Form
 function Register_Product()
 {
+
 //item_code null Exception processing
   if ($("#item_code").val().length < 1 )
   {
@@ -48,40 +52,36 @@ function Register_Product()
     var check = true;
 
         $.ajax({
-    type: "POST",
-    url: "./duplicate_Codecheck.php",
-    data: { item_code: $("#item_code").val()},
+                type: "POST",
+                url: "./Duplicate_Codecheck.php",
+                data: { item_code: $("#item_code").val()},
 
-    async:false,
+                async:false,
 
 //if return value is 200 or 404
-    success: function(msg) {
-
-    if(msg == 200){
-        alert('すでに登録されている商品番号です');
-        $("#item_code").focus();
-        check = false;
-      }
-
-    }
-  });
-  return check;
+        success: function(msg){
+          if(msg == 200){
+                          alert('すでに登録されている商品番号です');
+                          $("#item_code").focus();
+                          check = false;
+                        }
+                      }
+                  });
+                    return check;
   }
 }
 
 
-$(document).ready(function(){
-  $('.disabled_check').click(function(){
-  })
-});
+// $(document).ready(function(){
+//   $('.disabled_check').click(function(){
+//   })
+// });
 
 
+//delivery_type == Mail_Delivery
 function Mail_Delivery(){
-console.log('Mail');
     if($("#check_mail").prop('checked'))
     {
-
-    //document.getElementById('Std_Delivery').style.display = "none";
 
     $("input:checkbox[id='check_Standard']").attr({'checked':false});
 
@@ -109,16 +109,13 @@ console.log('Mail');
             $("input:checkbox[name='prior']").attr({'disabled':false});
             $("input:text[name='shipping_preparation_period']").attr({'disabled':false});
             }
-
-
         }
 
-
+//delivery_type == Standard_Delivery
 function Standard_Delivery(){
-    console.log('Standard');
+
     if($("#check_Standard").prop('checked'))
         {
-
              document.getElementById('Std_Delivery').style.display = "block";
             $("input:checkbox[id='check_mail']").attr({'checked':false});
             $("input:checkbox[name='temperature_controlled']").attr({'disabled':false});
@@ -165,6 +162,7 @@ function enable_specific_shipping_charge_set()
         }
 }
 
+
 function temperature_Exception_cold()
 {
     if($("#temperature_controlled_cold").prop('checked'))
@@ -196,9 +194,4 @@ function temperature_Exception_freeze()
         $("input:checkbox[id='temperature_controlled_cold']").attr({'disabled':false});
         $("input:radio[name='delivery_to_convenience_store']").attr({'disabled':false});
     }
-}
-
-
-function get_image_name(){
-    $("#image_name").val("");
 }
